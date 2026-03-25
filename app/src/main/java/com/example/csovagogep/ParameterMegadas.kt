@@ -32,14 +32,25 @@ class ParameterMegadas : AppCompatActivity() {
     private var isBtConnected = false
 
 
+    private lateinit var jogD: EditText
     private lateinit var jogX: EditText
     private lateinit var jogFi: EditText
-    private lateinit var jogStart: Button
+    private lateinit var jogAdat: Button
+    private lateinit var startX: Button
+    private lateinit var startA: Button
+
+
     private lateinit var funkcioSwitch: Switch
     private lateinit var d: EditText
     private lateinit var D: EditText
     private lateinit var alfa: EditText
-    private lateinit var vagasStart: Button
+    private lateinit var sebesseg: EditText
+    private lateinit var vagasAdat: Button
+    private lateinit var palastMegm: Button
+    private lateinit var homlokMegm: Button
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,28 +63,34 @@ class ParameterMegadas : AppCompatActivity() {
             insets
         }
 
+        jogD = findViewById(R.id.edtexJogD)
         jogX = findViewById(R.id.edtexJogX)
         jogFi = findViewById(R.id.edtexJogFi)
-        jogStart = findViewById(R.id.btnJogStart)
-        funkcioSwitch = findViewById(R.id.swVagasTipus)
+        jogAdat = findViewById(R.id.btnJogAdatKüld)
+        startX = findViewById(R.id.btnXpoz)
+        startA =findViewById(R.id.btnApoz)
         d = findViewById(R.id.edtexKisd)
         D = findViewById(R.id.edtexNagyD)
         alfa = findViewById(R.id.edtexBezartSzog)
-        vagasStart = findViewById(R.id.btnVagasStart)
+        sebesseg = findViewById(R.id.edtexVagsSeb)
+        vagasAdat = findViewById(R.id.btnVagasAdat)
+        palastMegm = findViewById(R.id.btnPalástV)
+        homlokMegm = findViewById(R.id.btnHomlokV)
 
         var message = ""
 
-        jogStart.setOnClickListener {
+        jogAdat.setOnClickListener {
+            val d =jogD.text.toString()
             val x = jogX.text.toString()
             val fi = jogFi.text.toString()
-            if(x.isNotEmpty() && fi.isNotEmpty()){
-                message = "$x $fi"
+            if(d.isNotEmpty() && x.isNotEmpty() && fi.isNotEmpty()){
+                message = "J $d $x $fi\n"
                 sendData(message)
-            }else if(x.isNotEmpty()){
-                message = "$x 0"
+            }else if(d.isNotEmpty() && x.isNotEmpty()){
+                message = "J $d $x 0\n"
                 sendData(message)
-            }else if(fi.isNotEmpty()){
-                message = "0 $fi"
+            }else if(d.isNotEmpty() && fi.isNotEmpty()){
+                message = "J $d 0 $fi\n"
                 sendData(message)
             }
             else{
@@ -81,36 +98,39 @@ class ParameterMegadas : AppCompatActivity() {
             }
         }
 
-        funkcioSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                funkcioSwitch.text = "Homlok megmunkálás"
-                vagasStart.setOnClickListener {
-                    val kisd = d.text.toString()
-                    val nagyD = D.text.toString()
-                    val alfaszog = alfa.text.toString()
-                    if(kisd.isNotEmpty() && nagyD.isNotEmpty() && alfaszog.isNotEmpty()){
-                        message = "H $kisd $nagyD $alfaszog"
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                        sendData(message)
-                    }else{
-                        Toast.makeText(this, "Adj meg értéket a vágáshoz!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                funkcioSwitch.text = "Palást megmunkálás"
-                vagasStart.setOnClickListener {
-                    val kisd = d.text.toString()
-                    val nagyD = D.text.toString()
-                    val alfaszog = alfa.text.toString()
-                    if(kisd.isNotEmpty() && nagyD.isNotEmpty() && alfaszog.isNotEmpty()){
-                        message = "P $kisd $nagyD $alfaszog"
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                        sendData(message)
-                    }else{
-                        Toast.makeText(this, "Adj meg értéket a vágáshoz!", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        startX.setOnClickListener {
+            message = "X"
+            sendData(message)
+        }
+
+        startA.setOnClickListener {
+            message = "A"
+            sendData(message)
+        }
+
+
+        vagasAdat.setOnClickListener {
+            val nagyD = D.text.toString()
+            val kisd = d.text.toString()
+            val alfaszog = alfa.text.toString()
+            val v = sebesseg.text.toString()
+            if(v.isNotEmpty() && kisd.isNotEmpty() && nagyD.isNotEmpty() && alfaszog.isNotEmpty()){
+                message = "D $nagyD $kisd $alfaszog $v 0\n"
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                sendData(message)
+            }else{
+                Toast.makeText(this, "Adj meg értéket a vágáshoz!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        palastMegm.setOnClickListener {
+            message = "P"
+            sendData(message)
+        }
+
+        homlokMegm.setOnClickListener {
+            message = "H"
+            sendData(message)
         }
 
         devAddress = intent.getStringExtra("MAC_ADDRESS")
@@ -118,8 +138,6 @@ class ParameterMegadas : AppCompatActivity() {
 
         val bluetoothManager = getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager.adapter
-
-
 
     }
 
